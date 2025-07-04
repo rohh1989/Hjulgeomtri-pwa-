@@ -30,4 +30,59 @@
   </div>
   <script src="app.js"></script>
 </body>
-</html>
+</html>function angleMinutesToMM(minutes, diameterMM) {
+  const angleDeg = minutes / 60;
+  const radians = angleDeg * Math.PI / 180;
+  const radius = diameterMM / 2;
+  return 2 * radius * Math.tan(radians);
+}
+
+const rimSelect = document.getElementById('rimSize');
+for (let i = 13; i <= 22; i++) {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `${i}"`;
+  rimSelect.appendChild(opt);
+}
+
+function calculate() {
+  const minutes = Number(document.getElementById('vinkel').value);
+  const rim = Number(rimSelect.value);
+  const diameter = rim * 25.4;
+  const toeWheel = angleMinutesToMM(minutes, diameter);
+  const toeTotal = toeWheel * 2;
+  const camber = toeWheel;
+  document.getElementById('toeWheel').textContent = toeWheel.toFixed(2);
+  document.getElementById('toeTotal').textContent = toeTotal.toFixed(2);
+  document.getElementById('camber').textContent = camber.toFixed(2);
+}
+
+document.getElementById('beregn').addEventListener('click', calculate);
+calculate();{
+  "name": "Toe & Camber Kalkulator",
+  "short_name": "HjulGeom",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3f51b5",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}const cacheName = 'hjulgeom-v1';
+const filesToCache = [
+  '.',
+  'index.html',
+  'app.js',
+  'manifest.json',
+  'icon-192.png',
+  'icon-512.png'
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(cacheName).then(cache => cache.addAll(filesToCache)));
+});
+
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(resp => resp || fetch(e.request)));
+});
